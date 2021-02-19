@@ -3,15 +3,21 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 func main() {
-	max := 100
+	rand.Seed(time.Now().UnixNano())
+	max := 20
 	stepper := 0
 	var Root Candy
 	cn := 0
+	startAgain := false
 	Root.candyNumber = &cn
 	Root.CreateColumn(max, &stepper)
+	Root.PrintCandyCol()
+	Root.DeleteDuplicants(&startAgain, &Root)
+	Root.PrintCandyCol()
 	fmt.Println("Hello!")
 }
 
@@ -23,7 +29,7 @@ type Candy struct {
 }
 
 func (c *Candy) CreateColumn(max int, stepper *int) {
-	c.color = rand.Intn(10)
+	c.color = rand.Intn(19)
 	*stepper += 1
 	*c.candyNumber++
 	if *stepper < max {
@@ -34,12 +40,25 @@ func (c *Candy) CreateColumn(max int, stepper *int) {
 	}
 }
 
-func (c *Candy) DeleteDuplicants(startAgain *bool, firstElement Candy) {
+func (c *Candy) PrintCandyCol() {
+	fmt.Print(c.color)
 	if c.next != nil {
-		if c.next.color == c.color || c.next.deleteNextTime {
+		fmt.Print(",")
+		c.next.PrintCandyCol()
+	} else {
+		fmt.Printf("\n")
+	}
+}
+
+func (c *Candy) DeleteDuplicants(startAgain *bool, firstElement *Candy) {
+	if c.next != nil {
+		if c.next.color == c.color {
 			c.DeleteNext()
 			c.deleteNextTime = true
 			*startAgain = true
+			c.DeleteDuplicants(startAgain, firstElement)
+		} else if c.next.deleteNextTime {
+			c.DeleteNext()
 			c.DeleteDuplicants(startAgain, firstElement)
 		} else {
 			c.next.DeleteDuplicants(startAgain, firstElement)
