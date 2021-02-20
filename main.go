@@ -8,7 +8,7 @@ import (
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	max := 20
+	const max int = 20
 	stepper := 0
 	var Root Candy
 	cn := 0
@@ -18,7 +18,7 @@ func main() {
 	Root.PrintCandyCol()
 	Root.DeleteDuplicants(&startAgain, &Root)
 	Root.PrintCandyCol()
-	fmt.Println("Hello!")
+	fmt.Println("Finished!")
 }
 
 type Candy struct {
@@ -71,5 +71,7 @@ func (c *Candy) DeleteDuplicants(startAgain *bool, firstElement *Candy) {
 
 func (c *Candy) DeleteNext() {
 	*c.candyNumber--
+	tmp := c.next
 	c.next = c.next.next
+	tmp.next = nil
 }
